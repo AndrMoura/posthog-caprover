@@ -31,7 +31,7 @@ Wait 60 seconds and navigate to `http://localhost:3000` and change your root dom
 
 ## Deploying PostHog
 
-To deploy PostHog, we'll use a CapRover template file (`caprover-deploy.yml`). The template file will be used to deploy several services required by PostHog.
+To deploy PostHog, we'll use a CapRover template file (`posthog-deploy.yml`). The template file will be used to deploy several services required by PostHog.
 
 Follow the steps below:
 
