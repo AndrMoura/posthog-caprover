@@ -26,21 +26,21 @@ sudo echo "{\"skipVerifyingDomains\":\"true\"}" | sudo tee /captain/data/config-
 docker run -e ACCEPTED_TERMS=true -e MAIN_NODE_IP_ADDRESS=127.0.0.1 -p 80:80 -p 443:443 -p 3000:3000 -v /var/run/docker.sock:/var/run/docker.sock -v /captain:/captain caprover/caprover
 ```
 
-Wait 60 seconds and navigate to `http://localhost:3000` and change your root domain to `captain.localhost`. CapRover now is ready to deploy PostHog-LLM. ✔️
+Wait 60 seconds and navigate to `http://localhost:3000` and change your root domain to `captain.localhost`. CapRover now is ready to deploy PostHog. ✔️
 
 
 ## Deploying PostHog
 
-To deploy PostHog-LLM, we'll use a CapRover template file (`caprover-deploy.yml`) that simplifies the process. The template file will be used to deploy several services required by PostHog-LLM.
+To deploy PostHog, we'll use a CapRover template file (`caprover-deploy.yml`). The template file will be used to deploy several services required by PostHog.
 
 Follow the steps below:
 
 * Go to `Apps` -> `One Click Apps`, navigate to the bottom of the page and click `>> TEMPLATE <<`.
 
-* Copy `caprover-deploy.yml` contents and paste it inside the textbox to set up the necessary services, configurations, and environment variables. 
+* Copy `posthog-deploy.yml` contents and paste it inside the textbox to set up the necessary services, configurations, and environment variables. 
 
 
-Define an app name. Define the name of your app (e.g 'hobby'), if you wish you can leave the rest of the fields as they are. Just hit deploy!
+Define the name of your app (e.g 'hobby'), if you wish you can leave the rest of the fields as they are. Just hit deploy!
 
 CapRover will start deploying a bunch of services. There's two databases (postgres and clickhouse), redis, temporal (export data to the outside), kakfa, worker service, django in the backend, plugin-server for ingestion with TypeScript, phew! It's quite the app! Give it a few minutes and you'll see the ready message! 
 
