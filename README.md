@@ -61,6 +61,10 @@ docker build -t you_user/helper .
 docker push your_user/helper
 ```
 
+# Video installation example
+
+Here's an example using this repository [YouTube video](https://www.youtube.com/watch?v=3dJ2O1_f5zQ).
+
 ## Troubleshooting
 
 During deployment, CapRover's nginx might timeout while registering your PostHog services (slower internet or hardware), with a 500 error.
@@ -70,4 +74,3 @@ You can also confirm the timeout using the following command:
 `docker service logs captain-nginx --since 15m --follow`
 
 To fix this, nagivate to `Settings` -> `NGINX Configurations` -> `/etc/nginx/conf.d/captain-root.conf` and change `proxy_read_timeout 120s;` to `proxy_read_timeout 3600s;`
-
