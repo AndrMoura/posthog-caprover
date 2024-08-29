@@ -89,7 +89,7 @@ services:
             OBJECT_STORAGE_SECRET_ACCESS_KEY: 'object_storage_root_password'
             OBJECT_STORAGE_ENDPOINT: http://srv-captain--$$cap_appname-objectstorage:19000
             OBJECT_STORAGE_ENABLED: true
-  
+
     $$cap_appname-objectstorage:
         image: minio/minio:RELEASE.2022-06-25T15-50-16Z
         restart: on-failure
@@ -147,6 +147,7 @@ services:
             TRUST_ALL_PROXIES: $$cap_trust_all_proxies
             CLICKHOUSE_SECURE: $$cap_clickhouse_secure
             DISABLE_SECURE_SSL_REDIRECT: $$cap_disable_ssl_redirect
+            OBJECT_STORAGE_ENABLED: true
 
         command: sh -c "./bin/migrate && ./bin/docker-server"
 
