@@ -61,9 +61,12 @@ docker build -t you_user/helper .
 docker push your_user/helper
 ```
 
-# Video installation example
+# Video Installation Examples
 
-Here's an example using this repository [YouTube video](https://www.youtube.com/watch?v=3dJ2O1_f5zQ).
+Below are two videos demonstrating how to install PostHog with CapRover:
+
+* [Installing Locally](https://www.youtube.com/watch?v=3dJ2O1_f5zQ)
+* [Installing on DigitalOcean Droplets with a Custom Domain](https://www.youtube.com/watch?v=OUtAwuKIZeE)
 
 ## Troubleshooting
 
