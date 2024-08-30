@@ -71,7 +71,6 @@ services:
         image: posthog/posthog:$$cap_posthog_version
         command: ./bin/docker-worker-celery --with-scheduler
         caproverExtra:
-            containerHttpPort: '8000'
             notExposeAsWebApp: 'true'
         restart: on-failure
         environment:
@@ -103,7 +102,6 @@ services:
             MINIO_ROOT_PASSWORD: $$cap_object_storage_root_password
         command: sh -c 'mkdir -p /data/posthog && minio server --address ":19000" --console-address ":19001" /data'
 
-
     $$cap_appname-plugin:
         image: posthog/posthog:$$cap_posthog_version
         depends_on:
@@ -130,7 +128,7 @@ services:
             CDP_REDIS_HOST: srv-captain--$$cap_appname-redis7
             CDP_REDIS_PORT: 6379
         command: ./bin/plugin-server
-        
+
     $$cap_appname-web:
         image: posthog/posthog:$$cap_posthog_version
         caproverExtra:
@@ -180,15 +178,13 @@ services:
         restart: on-failure
         caproverExtra:
             notExposeAsWebApp: 'true'
-            dockerfileLines:
-                - FROM temporalio/auto-setup:1.20.0
         environment:
             DB: postgresql
             DB_PORT: $$cap_postgres_port
             POSTGRES_USER: $$cap_postgres_user
             POSTGRES_PWD: $$cap_postgres_password
             POSTGRES_SEEDS: srv-captain--$$cap_appname-db
-            ENABLE_ES: false
+            ENABLE_ES: $$cap_enable_elastic_search
             ES_SEEDS: srv-captain--$$cap_appname-elasticsearch
             ES_VERSION: v7
         image: temporalio/auto-setup:1.20.0
@@ -220,7 +216,7 @@ services:
             - 8081:8080
         depends_on:
             - $$cap_appname-temporal
-            - $$cap_appname-db       
+            - $$cap_appname-db
 
     $$cap_appname-temporal-django-worker:
         image: posthog/posthog:$$cap_posthog_version
@@ -248,10 +244,8 @@ services:
             - $$cap_appname-objectstorage
             - $$cap_appname-temporal
 
-
 caproverOneClickApp:
     variables:
-
         - id: $$cap_postgres_db
           label: Postgres DB name
           defaultValue: posthog
@@ -281,36 +275,49 @@ caproverOneClickApp:
         - id: $$cap_behind_proxy
           label: Is PostHog running behind a proxy
           defaultValue: 'true'
+          validRegex: /^(true|false)$/
           description: 'Set to true if PostHog is running behind proxy (Caddy, nginx)'
 
         - id: $$cap_trust_all_proxies
           label: Trust all proxies
           defaultValue: 'false'
+          validRegex: /^(true|false)$/
           description: 'Determines if all proxies can be trusted.'
 
         - id: $$cap_disable_ssl_redirect
           label: Disable Secure SSL Redirect
           defaultValue: 'true'
+          validRegex: /^(true|false)$/
           description: Disables automatic redirect from port 80 (HTTP) to port 443 (HTTPS).
 
         - id: $$cap_clickhouse_secure
           label: Clickhouse secure
           defaultValue: 'false'
+          validRegex: /^(true|false)$/
           description: Whether to secure ClickHouse connection
 
         - id: $$cap_enable_object_storage
           label: Enable Object storage
+          validRegex: /^(true|false)$/
           defaultValue: 'true'
 
         - id: $$cap_object_storage_root_user
           label: Object Storage Root User
           description: The access key for the root user for MinIO
           defaultValue: object_storage_root_user
-        
+
         - id: $$cap_object_storage_root_password
           label: Object Storage Password Key
           description: The secret key for the root user
-          defaultValue: object_storage_root_password
+          defaultValue: $$cap_gen_random_hex(23)
+          validRegex: /^([^\s^\/])+$/
+
+        - id: $$cap_enable_elastic_search
+          description: Enable elastic search with Temporal
+          label: Enable Elastic Search
+          defaultValue: 'false'
+          validRegex: /^(true|false)$/
+
 
     instructions:
         start: >-
@@ -325,8 +332,3 @@ caproverOneClickApp:
     displayName: PostHog
     isOfficial: false
     description: 🦔 PostHog provides open-source product analytics, session recording, feature flagging and A/B testing that you can self-host. 
-
-volumes:
-    zookeeper-data:
-    zookeeper-datalog:
-    zookeeper-logs:
