@@ -51,16 +51,6 @@ You are now ready to start using PostHog! Navigate to the HTTP link and you'll s
 ![web-preview](https://github.com/user-attachments/assets/da7fa7c7-7637-46e6-ae6c-40e774c38799)
 
 
-## Notes
-
-The `Dockerfile` includes some PostHog files necessary for ClickHouse and Temporal services. During deployment, this image serves as a helper to pass files to each service. I've already provided this image on my DockerHub, so you don't need to create it yourself.
-
-```bash
-sudo ./helper_files.sh
-docker build -t you_user/helper .
-docker push your_user/helper
-```
-
 # Video Installation Examples
 
 Below are two videos demonstrating how to install PostHog with CapRover:

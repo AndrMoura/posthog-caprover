@@ -40,13 +40,18 @@ services:
         caproverExtra:
             notExposeAsWebApp: 'true'
             dockerfileLines:
-                - FROM andremoura/helper AS helper
+                - FROM alpine AS build
+                - RUN apk add --no-cache curl tar
+                - WORKDIR /
+                - RUN mkdir -p "docker"
+                - RUN curl -L https://github.com/PostHog/posthog/tarball/c25b571388a9ad05d529a14daee8f49819280496 | tar -xz --wildcards --strip-components=2 -C "./" '*/posthog/idl/*'
+                - RUN curl -L https://github.com/PostHog/posthog/tarball/c25b571388a9ad05d529a14daee8f49819280496 | tar -xz --wildcards --strip-components=2 -C "docker" '*/docker/*'
                 - RUN sed -i "s|<host>zookeeper</host>|<host>srv-captain--$$cap_appname-zookeeper</host>|" /docker/clickhouse/config.xml
                 - FROM clickhouse/clickhouse-server:23.11.2.11-alpine
-                - COPY --from=helper /docker/clickhouse/config.xml /etc/clickhouse-server/config.xml
-                - COPY --from=helper /docker/clickhouse/users.xml /etc/clickhouse-server/users.xml
-                - COPY --from=helper /docker/clickhouse/docker-entrypoint-initdb.d /docker-entrypoint-initdb.d
-                - COPY --from=helper /idl /idl
+                - COPY --from=build /docker/clickhouse/config.xml /etc/clickhouse-server/config.xml
+                - COPY --from=build /docker/clickhouse/users.xml /etc/clickhouse-server/users.xml
+                - COPY --from=build /docker/clickhouse/docker-entrypoint-initdb.d /docker-entrypoint-initdb.d
+                - COPY --from=build /idl /idl
         volumes:
             - clickhouse-data:/var/lib/clickhouse
 
@@ -207,7 +212,7 @@ services:
 
     $$cap_appname-temporal-ui:
         caproverExtra:
-            containerHttpPort: '8081'
+            containerHttpPort: '8080'
         environment:
             TEMPORAL_ADDRESS: srv-captain--$$cap_appname-temporal:7233
             TEMPORAL_CORS_ORIGINS: http://localhost:3000
@@ -318,17 +323,16 @@ caproverOneClickApp:
           defaultValue: 'false'
           validRegex: /^(true|false)$/
 
-
     instructions:
         start: >-
-            🦔 PostHog provides open-source product analytics, session recording, feature flagging and A/B testing that you can self-host.
-
-
             Enter your PostHog Configuration parameters and click on next. The process will take a just a few minutes to finish.
+
+            **Note**: This One Click App deploys a **total of 16 different apps** and it requires at least 8GB of RAM with a a Quad-Core CPU.
         end: >
             Posthog is deployed and available as $$cap_appname-web. Migrations from Clickhouse and Postgres have now started.
 
             IMPORTANT: It will take up to 5-8 minutes for PostHog to be ready. Before that, you might see a 502 error page. Check the logs under the Deployment tab.
     displayName: PostHog
     isOfficial: false
-    description: 🦔 PostHog provides open-source product analytics, session recording, feature flagging and A/B testing that you can self-host. 
+    description: 🦔 PostHog provides open-source product analytics, session recording, feature flagging and A/B testing that you can self-host.
+    documentation: https://posthog.com/docs
